@@ -10,7 +10,7 @@ namespace YouYou.Data.Mappings
         {
             builder.HasKey(c => c.Id);
 
-            builder.Property(c => c.NickName)
+            builder.Property(c => c.NickName).IsRequired(false)
                 .HasColumnType("varchar(256)");
 
             builder.Property(c => c.IsCompany)

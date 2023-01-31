@@ -190,8 +190,7 @@ namespace YouYou.Api.Controllers
                 Name = userWithPerson.IsCompany ? userWithPerson.JuridicalPerson.CompanyName : userWithPerson.PhysicalPerson.Name,
                 Email = user.Email,
                 Claims = claims.Where(c => !notTypeResults.Contains(c.Type))
-                            .Select(c => new ClaimViewModel { Type = c.Type, Value = c.Value }),
-                ReadTermsOfUse = user.TermsOfUse == null ? false : true
+                            .Select(c => new ClaimViewModel { Type = c.Type, Value = c.Value })
             };
 
             return userData;

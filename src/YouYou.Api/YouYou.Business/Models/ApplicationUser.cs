@@ -23,8 +23,6 @@ namespace YouYou.Business.Models
 
         public JuridicalPerson JuridicalPerson { get; set; }
 
-        public string TermsOfUse { get; set; }
-
         [NotMapped]
         public ValidationResult ValidationResult { get; protected set; }
 

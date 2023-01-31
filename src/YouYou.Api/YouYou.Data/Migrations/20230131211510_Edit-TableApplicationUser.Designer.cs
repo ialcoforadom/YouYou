@@ -2,15 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using YouYou.Data.Context;
 
 namespace YouYou.Data.Migrations
 {
     [DbContext(typeof(YouYouContext))]
-    partial class YouYouContextModelSnapshot : ModelSnapshot
+    [Migration("20230131211510_Edit-TableApplicationUser")]
+    partial class EditTableApplicationUser
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
