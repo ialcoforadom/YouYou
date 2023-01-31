@@ -1,63 +1,90 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using YouYou.Api.Configuration;
+using YouYou.Data.Context;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Microsoft.OpenApi.Models;
-using YouYou.Api.Data;
 
 namespace YouYou.Api
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
-        {
-            Configuration = configuration;
-        }
-
         public IConfiguration Configuration { get; }
+
+        public Startup(IHostEnvironment hostEnvironment)
+        {
+            var builder = new ConfigurationBuilder()
+                .SetBasePath(hostEnvironment.ContentRootPath)
+                .AddJsonFile("appsettings.json", true, true)
+                .AddJsonFile($"appsettings.{hostEnvironment.EnvironmentName}.json", true, true)
+                .AddEnvironmentVariables();
+
+            if (hostEnvironment.IsDevelopment())
+            {
+                builder.AddUserSecrets<Startup>();
+            }
+
+            Configuration = builder.Build();
+        }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<DataContext>(
-                 context => context.UseSqlite(Configuration.GetConnectionString("Default"))
-                );
-            services.AddControllers();
-            services.AddSwaggerGen(c =>
+            services.AddDbContext<YouYouContext>(options =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "YouYou.Api", Version = "v1" });
+                options.UseMySql(Configuration.GetConnectionString("Default"));
+                // .EnableSensitiveDataLogging()//Para habilitar log do entity nas consultas
+                //.UseLoggerFactory(LoggerFactory.Create(builder => builder.AddConsole()));
             });
+
+            //services.AddRedisConfig(Configuration);
+
+            services.AddIdentityConfiguration(Configuration);
+
+            services.AddAutoMapper(typeof(Startup));
+
+            services.AddGlobalization();
+
+            services.WebApiConfig();
+
+            services.AddSwaggerConfig();
+
+            services.AddHttpContextAccessor();
+
+            services.ResolveDependencies();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory)
         {
             if (env.IsDevelopment())
             {
+                app.UseCors("Development");
                 app.UseDeveloperExceptionPage();
-                app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "YouYou.Api v1"));
+            }
+            else
+            {
+                app.UseCors("Staging");
+                app.UseDeveloperExceptionPage();
+                // app.UseHsts();
             }
 
-            app.UseHttpsRedirection();
+            app.UseGlobalization();
 
-            app.UseRouting();
+            app.UseAuthentication();
 
-            app.UseAuthorization();
+            app.UseIdentityConfiguration();
 
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapControllers();
-            });
+            // app.UseMiddleware<ExceptionMiddleware>();
+
+            app.UseProblemDetailsExceptionHandler(loggerFactory);
+
+            app.UseApiConfig();
+
+            app.UseSwaggerConfig();
         }
     }
 }

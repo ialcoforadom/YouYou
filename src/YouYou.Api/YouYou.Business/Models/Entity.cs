@@ -1,14 +1,15 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
+using FluentValidation.Results;
 
-namespace YouYou.Api.Models
+namespace YouYou.Business.Models
 {
     public abstract class Entity
     {
 
         public Guid Id { get; set; }
 
-        //[NotMapped]
-        //public ValidationResult ValidationResult { get; protected set; }
+        [NotMapped]
+        public ValidationResult ValidationResult { get; protected set; }
 
         protected Entity()
         {
