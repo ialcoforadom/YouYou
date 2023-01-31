@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using YouYou.Api.Data;
 using YouYou.Api.Models;
 
 namespace YouYou.Api.Controllers
@@ -7,8 +8,8 @@ namespace YouYou.Api.Controllers
     [Route("api/[controller]")]
     public class UsuarioController : ControllerBase
     {
-
-        public UsuarioController()
+        private readonly DataContext _context;
+        public UsuarioController(DataContext context)
         {
         }
 
