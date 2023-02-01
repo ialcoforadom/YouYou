@@ -17,6 +17,9 @@ namespace YouYou.Data.Context
         public DbSet<ExtraPhone> ExtraPhones { get; set; }
         public DbSet<JuridicalPerson> JuridicalPersons { get; set; }
         public DbSet<PhysicalPerson> PhysicalPersons { get; set; }
+        public DbSet<Employee> Employees { get; set; }
+        public DbSet<Gender> Genders { get; set; }
+        public DbSet<TypeGender> TypeGenders { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

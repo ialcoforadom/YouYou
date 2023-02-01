@@ -2,6 +2,7 @@
 using YouYou.Business.ErrorNotifications;
 using YouYou.Business.Interfaces;
 using YouYou.Business.Interfaces.BackOfficeUsers;
+using YouYou.Business.Interfaces.Employees;
 using YouYou.Business.Interfaces.ExtraPhones;
 using YouYou.Business.Interfaces.PhysicalPersons;
 using YouYou.Business.Interfaces.Users;
@@ -32,24 +33,20 @@ namespace YouYou.Api.Configuration
             services.AddScoped<IUser, AspNetUser>();
             services.AddScoped<ILogExceptionRepository, LogExceptionRepository>();
 
-            //services.AddTransient<IEmailSender, EmailSender>();
-
             services.AddScoped<IBackOfficeUserRepository, BackOfficeUserRepository>();
             services.AddScoped<IBackOfficeUserService, BackOfficeUserService>();
 
             services.AddScoped<IPhysicalPersonRepository, PhysicalPersonRepository>();
             services.AddScoped<IPhysicalPersonService, PhysicalPersonService>();
 
-            //services.AddScoped<ITranshipmentRepository, TranshipmentRepository>();
-            //services.AddScoped<IManageTranshipmentService, ManageTranshipmentService>();
-            //services.AddScoped<ITranshipmentPhysicalPersonService, TranshipmentPhysicalPersonService>();
-            //services.AddScoped<ITranshipmentJuridicalPersonService, TranshipmentJuridicalPersonService>();
-
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IUserRepository, UserRepository>();
 
             services.AddScoped<IExtraPhoneRepository, ExtraPhoneRepository>();
             services.AddScoped<IExtraPhoneService, ExtraPhoneService>();
+
+            services.AddScoped<IEmployeeRepository, EmployeeRepository>();
+            services.AddScoped<IEmployeeService, EmployeeService>();
 
             return services;
         }

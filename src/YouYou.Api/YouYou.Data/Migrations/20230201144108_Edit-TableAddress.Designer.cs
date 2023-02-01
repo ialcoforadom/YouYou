@@ -2,15 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using YouYou.Data.Context;
 
 namespace YouYou.Data.Migrations
 {
     [DbContext(typeof(YouYouContext))]
-    partial class YouYouContextModelSnapshot : ModelSnapshot
+    [Migration("20230201144108_Edit-TableAddress")]
+    partial class EditTableAddress
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -112,26 +114,21 @@ namespace YouYou.Data.Migrations
                         .HasColumnType("char(36)");
 
                     b.Property<string>("CEP")
-                        .IsRequired()
                         .HasColumnType("varchar(8)");
 
                     b.Property<int>("CityId")
                         .HasColumnType("int");
 
                     b.Property<string>("Complement")
-                        .IsRequired()
                         .HasColumnType("varchar(256)");
 
                     b.Property<string>("Neighborhood")
-                        .IsRequired()
                         .HasColumnType("varchar(256)");
 
                     b.Property<string>("Number")
-                        .IsRequired()
                         .HasColumnType("varchar(100)");
 
                     b.Property<string>("Street")
-                        .IsRequired()
                         .HasColumnType("varchar(256)");
 
                     b.HasKey("Id");

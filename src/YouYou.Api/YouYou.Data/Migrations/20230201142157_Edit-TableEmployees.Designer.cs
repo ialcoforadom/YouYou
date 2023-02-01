@@ -2,15 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using YouYou.Data.Context;
 
 namespace YouYou.Data.Migrations
 {
     [DbContext(typeof(YouYouContext))]
-    partial class YouYouContextModelSnapshot : ModelSnapshot
+    [Migration("20230201142157_Edit-TableEmployees")]
+    partial class EditTableEmployees
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -435,6 +437,7 @@ namespace YouYou.Data.Migrations
                         .HasColumnType("char(36)");
 
                     b.Property<string>("Description")
+                        .IsRequired()
                         .HasColumnType("varchar(256)");
 
                     b.Property<Guid>("TypeGenderId")

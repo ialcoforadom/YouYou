@@ -38,7 +38,10 @@ namespace YouYou.Api.Controllers
             _userService = userService;
             _cache = cache;
         }
-
+        /// <summary>
+        /// Endpoint para realizar o Logout do sistema.
+        /// </summary>
+        /// <returns></returns>
         [Authorize]
         [HttpPost("Logout")]
         public async Task<ActionResult> Logout()
@@ -47,7 +50,11 @@ namespace YouYou.Api.Controllers
 
             return CustomResponse();
         }
-
+        /// <summary>
+        /// Endpoint para realizar o Login no sistema
+        /// </summary>
+        /// <param name="loginUser">Email e Senha</param>
+        /// <returns></returns>
         [HttpPost("Login")]
         public async Task<ActionResult> Login(LoginUserViewModel loginUser)
         {
@@ -75,7 +82,11 @@ namespace YouYou.Api.Controllers
             NotifyError("Usuário ou Senha incorretos");
             return CustomResponse(loginUser);
         }
-
+        /// <summary>
+        /// Endpoint para realizar o refresh do Token para usuário logado.
+        /// </summary>
+        /// <param name="requestRefreshToken"></param>
+        /// <returns></returns>
         [HttpPost("RefreshToken")]
         public async Task<ActionResult> RefreshToken(RefreshTokenDataViewModel requestRefreshToken)
         {

@@ -33,7 +33,11 @@ namespace YouYou.Api.Controllers
             _userService = userService;
             _uriService = uriService;
         }
-
+        /// <summary>
+        /// Endpoint para criar um novo usuário do tipo 'Admin ou Operador'.
+        /// </summary>
+        /// <param name="userViewModel"></param>
+        /// <returns></returns>
         [HttpPost]
         public async Task<ActionResult> Add(BackOfficeUserCreateViewModel userViewModel)
         {
@@ -44,7 +48,11 @@ namespace YouYou.Api.Controllers
             await _backOfficeUserService.Add(backOfficeUser, userViewModel.Password, userViewModel.RoleId);
             return CustomResponse(userViewModel);
         }
-
+        /// <summary>
+        /// Endpoint para listar todos os usários do tipo 'Admin ou Operador'.
+        /// </summary>
+        /// <param name="filter"></param>
+        /// <returns></returns>
         [HttpGet]
         public async Task<IActionResult> GetAll([FromQuery] BackOfficeUsersFilter filter)
         {
@@ -83,7 +91,11 @@ namespace YouYou.Api.Controllers
 
             return route;
         }
-
+        /// <summary>
+        /// Endpoint para buscar um usário pelo Id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpGet("{id:Guid}")]
         public async Task<ActionResult<BackOfficeUserUpdateViewModel>> GetById(Guid id)
         {
@@ -92,7 +104,11 @@ namespace YouYou.Api.Controllers
 
             return _mapper.Map<BackOfficeUserUpdateViewModel>(backOfficeUser);
         }
-
+        /// <summary>
+        /// Endpoint para editar um usuário do tipo 'Admin ou Operador'
+        /// </summary>
+        /// <param name="userViewModel"></param>
+        /// <returns></returns>
         [HttpPut]
         public async Task<ActionResult<BackOfficeUserUpdateViewModel>> Update(BackOfficeUserUpdateViewModel userViewModel)
         {
@@ -105,7 +121,6 @@ namespace YouYou.Api.Controllers
             await _backOfficeUserService.Update(backOfficeUser, userViewModel.Password, userViewModel.RoleId);
             return CustomResponse(userViewModel);
         }
-
         private void MappingUpdate(BackOfficeUserUpdateViewModel userViewModel, BackOfficeUser backOfficeUser)
         {
             _mapper.Map<BackOfficeUserUpdateViewModel, ApplicationUser>
@@ -113,7 +128,11 @@ namespace YouYou.Api.Controllers
             _mapper.Map<BackOfficeUserUpdateViewModel, PhysicalPerson>
                 (userViewModel, backOfficeUser.User.PhysicalPerson);
         }
-
+        /// <summary>
+        /// Endpoint para deletar logicamente um usuário do tipo 'Admin ou Operador'.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpDelete("{id:Guid}")]
         public async Task<ActionResult> Remove(Guid id)
         {
@@ -121,7 +140,11 @@ namespace YouYou.Api.Controllers
 
             return CustomResponse();
         }
-
+        /// <summary>
+        /// Endpoint para desativar um usuário do tipo 'Admin ou Operador'.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpPut("Disable/{id:Guid}")]
         public async Task<ActionResult> Disable(Guid id)
         {
@@ -132,7 +155,11 @@ namespace YouYou.Api.Controllers
 
             return CustomResponse();
         }
-
+        /// <summary>
+        /// Endpoint para ativar um usuário do tipo 'Admin ou Operador'.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpPut("Enable/{id:Guid}")]
         public async Task<ActionResult> Enable(Guid id)
         {

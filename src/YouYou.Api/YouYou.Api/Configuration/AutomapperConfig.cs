@@ -5,7 +5,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using YouYou.Api.ViewModels.Addresses;
 using YouYou.Api.ViewModels.BackOfficeUsers;
+using YouYou.Api.ViewModels.BankData;
+using YouYou.Api.ViewModels.DocumentPhotos;
+using YouYou.Api.ViewModels.Employees;
+using YouYou.Api.ViewModels.Genders;
 using YouYou.Api.ViewModels.Users;
 using YouYou.Business.Models;
 using YouYou.Business.Models.Pagination;
@@ -29,6 +34,10 @@ namespace YouYou.Api.Configuration
                 .ForMember(dest => dest.PageSize, src => src.MapFrom(src => src.PageSize > 50 ? 50 : src.PageSize));
 
             CreateMap<BackOfficeUsersFilter, BackOfficeUsersFilter>()
+                .ForMember(dest => dest.PageNumber, src => src.MapFrom(src => src.PageNumber < 1 ? 1 : src.PageNumber))
+                .ForMember(dest => dest.PageSize, src => src.MapFrom(src => src.PageSize > 50 ? 50 : src.PageSize));
+
+            CreateMap<EmployeeFilter, EmployeeFilter>()
                 .ForMember(dest => dest.PageNumber, src => src.MapFrom(src => src.PageNumber < 1 ? 1 : src.PageNumber))
                 .ForMember(dest => dest.PageSize, src => src.MapFrom(src => src.PageSize > 50 ? 50 : src.PageSize));
             #endregion
@@ -68,6 +77,53 @@ namespace YouYou.Api.Configuration
                 .ForMember(dest => dest.Email, src => src.MapFrom(c => c.User.Email))
                 .ForMember(dest => dest.RoleId, src => src.MapFrom(c => c.User.UserRoles.FirstOrDefault().Role.Id));
 
+            #endregion
+
+            #region Employee
+
+            CreateMap<EmployeeCreateViewModel, Employee>();
+
+            CreateMap<EmployeeCreateViewModel, ApplicationUser>()
+                .ForMember(dest => dest.UserName, src => src.MapFrom(c => UsefulFunctions.RemoveNonNumeric(c.CPF)))
+                .ForMember(dest => dest.PasswordHash, src => src.MapFrom(c => c.Password));
+
+            CreateMap<EmployeeCreateViewModel, PhysicalPerson>()
+                .ForMember(dest => dest.CPF, src => src.MapFrom(c =>
+                    UsefulFunctions.RemoveNonNumeric(c.CPF))).ReverseMap();
+
+            CreateMap<Employee, EmployeeListViewModel>()
+                .ForMember(dest => dest.Name, src => src.MapFrom(dd => dd.User.PhysicalPerson.Name))
+                .ForMember(dest => dest.NickName, src => src.MapFrom(dd => dd.User.NickName))
+                .ForMember(dest => dest.City, src => src.MapFrom(dd => dd.Address.City.Name))
+                .ForMember(dest => dest.RolesNames, src => src.MapFrom(dd => dd.User.UserRoles.Select(r => r.Role.Name)))
+                .ForMember(dest => dest.GenderName, src => src.MapFrom(dd => dd.Gender.TypeGender.Name))
+                .ForMember(dest => dest.Disabled, src => src.MapFrom(dd => dd.User.Disabled));
+
+            #endregion
+
+            #region Address
+            CreateMap<AddressViewModel, Address>()
+                .ForMember(dest => dest.CEP, src => src.MapFrom(c =>
+                UsefulFunctions.RemoveNonNumeric(c.CEP)));
+
+            CreateMap<Address, AddressViewModel>()
+                .ForMember(dest => dest.StateId, src => src.MapFrom(c => c.City.StateId));
+            #endregion
+
+            #region BankData
+            CreateMap<BankDataViewModel, BankData>()
+                .ForMember(dest => dest.CpfOrCnpjHolder, src => src.MapFrom(c =>
+                    UsefulFunctions.RemoveNonNumeric(c.CpfOrCnpjHolder))).ReverseMap();
+            #endregion
+
+            #region DocumentPhoto
+            CreateMap<DocumentPhotoCreateViewModel, DocumentPhoto>()
+                .ForMember(dest => dest.FileType, src => src.MapFrom(src => src.Name.Substring(src.Name.LastIndexOf('.') + 1)))
+                .ForMember(dest => dest.DataFiles, src => src.MapFrom(src => Convert.FromBase64String(src.DataFiles)));
+            #endregion
+
+            #region Gender
+            CreateMap<GenderViewModel, Gender>().ReverseMap();
             #endregion
         }
 

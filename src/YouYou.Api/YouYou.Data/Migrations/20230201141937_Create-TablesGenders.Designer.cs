@@ -2,15 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using YouYou.Data.Context;
 
 namespace YouYou.Data.Migrations
 {
     [DbContext(typeof(YouYouContext))]
-    partial class YouYouContextModelSnapshot : ModelSnapshot
+    [Migration("20230201141937_Create-TablesGenders")]
+    partial class CreateTablesGenders
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -385,9 +387,6 @@ namespace YouYou.Data.Migrations
                     b.Property<DateTime?>("Birthday")
                         .HasColumnType("datetime");
 
-                    b.Property<Guid>("GenderId")
-                        .HasColumnType("char(36)");
-
                     b.Property<Guid>("UserId")
                         .HasColumnType("char(36)");
 
@@ -397,9 +396,6 @@ namespace YouYou.Data.Migrations
                         .IsUnique();
 
                     b.HasIndex("BankDataId")
-                        .IsUnique();
-
-                    b.HasIndex("GenderId")
                         .IsUnique();
 
                     b.HasIndex("UserId")
@@ -435,6 +431,7 @@ namespace YouYou.Data.Migrations
                         .HasColumnType("char(36)");
 
                     b.Property<string>("Description")
+                        .IsRequired()
                         .HasColumnType("varchar(256)");
 
                     b.Property<Guid>("TypeGenderId")
@@ -629,11 +626,6 @@ namespace YouYou.Data.Migrations
                     b.HasOne("YouYou.Business.Models.BankData", "BankData")
                         .WithOne()
                         .HasForeignKey("YouYou.Business.Models.Employee", "BankDataId");
-
-                    b.HasOne("YouYou.Business.Models.Gender", "Gender")
-                        .WithOne()
-                        .HasForeignKey("YouYou.Business.Models.Employee", "GenderId")
-                        .IsRequired();
 
                     b.HasOne("YouYou.Business.Models.ApplicationUser", "User")
                         .WithOne()

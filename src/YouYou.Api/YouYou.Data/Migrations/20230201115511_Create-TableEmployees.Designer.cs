@@ -2,15 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using YouYou.Data.Context;
 
 namespace YouYou.Data.Migrations
 {
     [DbContext(typeof(YouYouContext))]
-    partial class YouYouContextModelSnapshot : ModelSnapshot
+    [Migration("20230201115511_Create-TableEmployees")]
+    partial class CreateTableEmployees
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -382,12 +384,6 @@ namespace YouYou.Data.Migrations
                     b.Property<Guid?>("BankDataId")
                         .HasColumnType("char(36)");
 
-                    b.Property<DateTime?>("Birthday")
-                        .HasColumnType("datetime");
-
-                    b.Property<Guid>("GenderId")
-                        .HasColumnType("char(36)");
-
                     b.Property<Guid>("UserId")
                         .HasColumnType("char(36)");
 
@@ -397,9 +393,6 @@ namespace YouYou.Data.Migrations
                         .IsUnique();
 
                     b.HasIndex("BankDataId")
-                        .IsUnique();
-
-                    b.HasIndex("GenderId")
                         .IsUnique();
 
                     b.HasIndex("UserId")
@@ -426,25 +419,6 @@ namespace YouYou.Data.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("ExtraPhones");
-                });
-
-            modelBuilder.Entity("YouYou.Business.Models.Gender", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("varchar(256)");
-
-                    b.Property<Guid>("TypeGenderId")
-                        .HasColumnType("char(36)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("TypeGenderId");
-
-                    b.ToTable("Genders");
                 });
 
             modelBuilder.Entity("YouYou.Business.Models.JuridicalPerson", b =>
@@ -520,21 +494,6 @@ namespace YouYou.Data.Migrations
                     b.ToTable("States");
                 });
 
-            modelBuilder.Entity("YouYou.Business.Models.TypeGender", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("varchar(256)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("TypeGenders");
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
                 {
                     b.HasOne("YouYou.Business.Models.ApplicationRole", null)
@@ -576,6 +535,7 @@ namespace YouYou.Data.Migrations
                     b.HasOne("YouYou.Business.Models.City", "City")
                         .WithMany()
                         .HasForeignKey("CityId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
@@ -624,16 +584,12 @@ namespace YouYou.Data.Migrations
                     b.HasOne("YouYou.Business.Models.Address", "Address")
                         .WithOne()
                         .HasForeignKey("YouYou.Business.Models.Employee", "AddressId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("YouYou.Business.Models.BankData", "BankData")
                         .WithOne()
                         .HasForeignKey("YouYou.Business.Models.Employee", "BankDataId");
-
-                    b.HasOne("YouYou.Business.Models.Gender", "Gender")
-                        .WithOne()
-                        .HasForeignKey("YouYou.Business.Models.Employee", "GenderId")
-                        .IsRequired();
 
                     b.HasOne("YouYou.Business.Models.ApplicationUser", "User")
                         .WithOne()
@@ -647,14 +603,6 @@ namespace YouYou.Data.Migrations
                     b.HasOne("YouYou.Business.Models.ApplicationUser", "User")
                         .WithMany("ExtraPhones")
                         .HasForeignKey("UserId")
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("YouYou.Business.Models.Gender", b =>
-                {
-                    b.HasOne("YouYou.Business.Models.TypeGender", "TypeGender")
-                        .WithMany()
-                        .HasForeignKey("TypeGenderId")
                         .IsRequired();
                 });
 
