@@ -43,7 +43,7 @@ namespace YouYou.Api.Controllers
         {
             if (!ModelState.IsValid) return CustomResponse(ModelState);
 
-            var backOfficeUser = new BackOfficeUser(userViewModel.Name, userViewModel.CPF, userViewModel.Email);
+            var backOfficeUser = new BackOfficeUser(userViewModel.Name, userViewModel.CPF, userViewModel.Email, userViewModel.Birthday, userViewModel.Gender.TypeGenderId, userViewModel.Gender.Description);
 
             await _backOfficeUserService.Add(backOfficeUser, userViewModel.Password, userViewModel.RoleId);
             return CustomResponse(userViewModel);

@@ -12,6 +12,13 @@ namespace YouYou.Business.Interfaces.Employees
     {
         Task Add(EmployeeDto employeeDto, Guid roleId);
         Task<IEnumerable<Employee>> GetAllWithIncludes(EmployeeFilter filter);
-        Task<int> GetTotalRecords(EmployeeFilter filter);
+        Task<int> GetTotalRecords(EmployeeFilter filter); 
+        Task<Employee> GetById(Guid id); 
+        Task Remove(Employee employee); 
+        Task<EmployeeDto> GetDtoByIdWithIncludes(Guid id); 
+        Task Disable(Guid id);
+        Task Enable(Guid id); 
+        Task<Employee> GetByIdWithIncludesTracked(Guid id);
+        Task Update(EmployeeDto employeeDto);
     }
 }

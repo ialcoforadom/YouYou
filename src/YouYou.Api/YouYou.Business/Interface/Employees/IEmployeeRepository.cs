@@ -10,6 +10,8 @@ namespace YouYou.Business.Interfaces.Employees
     public interface IEmployeeRepository : IRepository<Employee>
     {
         Task<IEnumerable<Employee>> GetAllWithIncludes(EmployeeFilter filter);
-        Task<int> GetTotalRecords(EmployeeFilter filter);
+        Task<int> GetTotalRecords(EmployeeFilter filter); 
+        Task<Employee> GetByIdWithIncludes(Guid id);
+        Task<Employee> GetByIdWithIncludesTracked(Guid id);
     }
 }

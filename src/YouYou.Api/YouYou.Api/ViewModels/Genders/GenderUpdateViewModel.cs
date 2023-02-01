@@ -2,8 +2,11 @@
 
 namespace YouYou.Api.ViewModels.Genders
 {
-    public class GenderViewModel
+    public class GenderUpdateViewModel
     {
+        [Key]
+        public Guid Id { get; set; }
+
         [Required(ErrorMessage = "O campo {0} é obrigatório")]
         public Guid TypeGenderId { get; set; }
 

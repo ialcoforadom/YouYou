@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using YouYou.Api.Extensions;
+using YouYou.Api.ViewModels.Genders;
 
 namespace YouYou.Api.ViewModels.BackOfficeUsers
 {
@@ -20,6 +21,8 @@ namespace YouYou.Api.ViewModels.BackOfficeUsers
         [Required(ErrorMessage = "O campo {0} é obrigatório")]
         [EmailAddress(ErrorMessage = "O campo {0} está em formato inválido")]
         public string Email { get; set; }
+        public DateTime? Birthday { get; set; }
+        public GenderUpdateViewModel? Gender { get; set; }
 
         [StringLength(100, ErrorMessage = "O campo {0} precisa ter entre {2} e {1} caracteres", MinimumLength = 6)]
         public string Password { get; set; }

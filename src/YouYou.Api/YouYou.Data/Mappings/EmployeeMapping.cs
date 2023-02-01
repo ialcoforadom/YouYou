@@ -10,10 +10,6 @@ namespace YouYou.Data.Mappings
         {
             builder.HasKey(d => d.Id);
 
-            builder.Property(d => d.Birthday)
-                .IsRequired(false)
-                .HasColumnType("datetime");
-
             builder.HasOne(d => d.User)
                 .WithOne()
                 .OnDelete(DeleteBehavior.Cascade);
@@ -22,9 +18,6 @@ namespace YouYou.Data.Mappings
                 .WithOne();
 
             builder.HasOne(d => d.BankData)
-                .WithOne();
-
-            builder.HasOne(d => d.Gender)
                 .WithOne();
 
             builder.HasMany(d => d.DocumentPhotos)

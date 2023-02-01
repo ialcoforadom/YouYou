@@ -18,6 +18,13 @@ namespace YouYou.Data.Mappings
                 .IsRequired()
                 .HasColumnType("varchar(256)");
 
+            builder.Property(d => d.Birthday)
+                .IsRequired(false)
+                .HasColumnType("datetime");
+
+            builder.HasOne(d => d.Gender)
+                .WithOne();
+
             builder.ToTable("PhysicalPersons");
         }
     }

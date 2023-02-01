@@ -342,6 +342,35 @@ namespace YouYou.Data.Migrations
                     b.ToTable("Cities");
                 });
 
+            modelBuilder.Entity("YouYou.Business.Models.Client", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)");
+
+                    b.Property<Guid>("AddressId")
+                        .HasColumnType("char(36)");
+
+                    b.Property<Guid>("BankDataId")
+                        .HasColumnType("char(36)");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("char(36)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AddressId")
+                        .IsUnique();
+
+                    b.HasIndex("BankDataId")
+                        .IsUnique();
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
+                    b.ToTable("Clients");
+                });
+
             modelBuilder.Entity("YouYou.Business.Models.DocumentPhoto", b =>
                 {
                     b.Property<Guid>("Id")
@@ -382,12 +411,6 @@ namespace YouYou.Data.Migrations
                     b.Property<Guid?>("BankDataId")
                         .HasColumnType("char(36)");
 
-                    b.Property<DateTime?>("Birthday")
-                        .HasColumnType("datetime");
-
-                    b.Property<Guid>("GenderId")
-                        .HasColumnType("char(36)");
-
                     b.Property<Guid>("UserId")
                         .HasColumnType("char(36)");
 
@@ -397,9 +420,6 @@ namespace YouYou.Data.Migrations
                         .IsUnique();
 
                     b.HasIndex("BankDataId")
-                        .IsUnique();
-
-                    b.HasIndex("GenderId")
                         .IsUnique();
 
                     b.HasIndex("UserId")
@@ -482,9 +502,15 @@ namespace YouYou.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("char(36)");
 
+                    b.Property<DateTime?>("Birthday")
+                        .HasColumnType("datetime");
+
                     b.Property<string>("CPF")
                         .IsRequired()
                         .HasColumnType("varchar(11)");
+
+                    b.Property<Guid>("GenderId")
+                        .HasColumnType("char(36)");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -494,6 +520,9 @@ namespace YouYou.Data.Migrations
                         .HasColumnType("char(36)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("GenderId")
+                        .IsUnique();
 
                     b.HasIndex("UserId")
                         .IsUnique();
@@ -610,6 +639,24 @@ namespace YouYou.Data.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("YouYou.Business.Models.Client", b =>
+                {
+                    b.HasOne("YouYou.Business.Models.Address", "Address")
+                        .WithOne()
+                        .HasForeignKey("YouYou.Business.Models.Client", "AddressId")
+                        .IsRequired();
+
+                    b.HasOne("YouYou.Business.Models.BankData", "BankData")
+                        .WithOne()
+                        .HasForeignKey("YouYou.Business.Models.Client", "BankDataId")
+                        .IsRequired();
+
+                    b.HasOne("YouYou.Business.Models.ApplicationUser", "User")
+                        .WithOne()
+                        .HasForeignKey("YouYou.Business.Models.Client", "UserId")
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("YouYou.Business.Models.DocumentPhoto", b =>
                 {
                     b.HasOne("YouYou.Business.Models.Employee", "Employee")
@@ -629,11 +676,6 @@ namespace YouYou.Data.Migrations
                     b.HasOne("YouYou.Business.Models.BankData", "BankData")
                         .WithOne()
                         .HasForeignKey("YouYou.Business.Models.Employee", "BankDataId");
-
-                    b.HasOne("YouYou.Business.Models.Gender", "Gender")
-                        .WithOne()
-                        .HasForeignKey("YouYou.Business.Models.Employee", "GenderId")
-                        .IsRequired();
 
                     b.HasOne("YouYou.Business.Models.ApplicationUser", "User")
                         .WithOne()
@@ -669,6 +711,11 @@ namespace YouYou.Data.Migrations
 
             modelBuilder.Entity("YouYou.Business.Models.PhysicalPerson", b =>
                 {
+                    b.HasOne("YouYou.Business.Models.Gender", "Gender")
+                        .WithOne()
+                        .HasForeignKey("YouYou.Business.Models.PhysicalPerson", "GenderId")
+                        .IsRequired();
+
                     b.HasOne("YouYou.Business.Models.ApplicationUser", "User")
                         .WithOne("PhysicalPerson")
                         .HasForeignKey("YouYou.Business.Models.PhysicalPerson", "UserId")

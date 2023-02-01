@@ -15,10 +15,10 @@ namespace YouYou.Business.Models
 
         public BackOfficeUser() { }
 
-        public BackOfficeUser(string name, string cpf, string email)
+        public BackOfficeUser(string name, string cpf, string email, DateTime? birthday, Guid typeGenderId, string? description)
         {
             User = new ApplicationUser(email, email);
-            User.PhysicalPerson = new PhysicalPerson(cpf, name);
+            User.PhysicalPerson = new PhysicalPerson(cpf, name, birthday, typeGenderId, description);
         }
 
         public override bool IsValid()

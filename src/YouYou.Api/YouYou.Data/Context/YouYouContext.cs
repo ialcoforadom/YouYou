@@ -20,6 +20,7 @@ namespace YouYou.Data.Context
         public DbSet<Employee> Employees { get; set; }
         public DbSet<Gender> Genders { get; set; }
         public DbSet<TypeGender> TypeGenders { get; set; }
+        public DbSet<Client> Clients { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -30,7 +31,7 @@ namespace YouYou.Data.Context
 
             #region Filter Deleted
 
-            //modelBuilder.Entity<ApplicationUser>().HasQueryFilter(p => !p.IsDeleted);
+            modelBuilder.Entity<ApplicationUser>().HasQueryFilter(p => !p.IsDeleted);
 
             #endregion
 

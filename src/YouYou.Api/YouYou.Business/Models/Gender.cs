@@ -2,7 +2,13 @@
 {
     public class Gender : Entity
     {
-        public string Description { get; set; }
+        public Gender(){}
+        public Gender(Guid typeGenderId, string? description)
+        {
+            TypeGenderId = typeGenderId;
+            Description = description;
+        }
+        public string? Description { get; set; }
 
         public Guid TypeGenderId { get; set; }
 

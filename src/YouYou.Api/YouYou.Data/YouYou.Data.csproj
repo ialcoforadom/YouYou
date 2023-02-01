@@ -19,5 +19,8 @@
 	<ItemGroup>
 		<ProjectReference Include="..\YouYou.Business\YouYou.Business.csproj" />
 	</ItemGroup>
+	<ItemGroup>
+	  <Folder Include="Migrations\" />
+	</ItemGroup>
 
 </Project>

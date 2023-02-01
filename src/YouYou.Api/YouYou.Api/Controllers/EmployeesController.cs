@@ -56,7 +56,11 @@ namespace YouYou.Api.Controllers
 
             return new EmployeeDto(employee, employeeVM.Phones, employeeVM.Password);
         }
-
+        /// <summary>
+        /// Endpoint para listar todos os funcionários
+        /// </summary>
+        /// <param name="filter"></param>
+        /// <returns></returns>
         [Authorize(Roles = "Admin, Operador, Coordenador")]
         [HttpGet]
         public async Task<IActionResult> GetAll([FromQuery] EmployeeFilter filter)
@@ -95,6 +99,82 @@ namespace YouYou.Api.Controllers
             }
 
             return route;
+        }
+
+        /// <summary>
+        /// Endpoint para deletar logicamente o funcionário
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [Authorize(Roles = "Admin, Operador, Coordenador")]
+        [HttpDelete("{id:Guid}")]
+        public async Task<ActionResult> Remove(Guid id)
+        {
+            var employee = await _employeeService.GetById(id);
+            if (employee == null) return NotFound();
+
+            await _employeeService.Remove(employee);
+            return CustomResponse();
+        }
+
+        [Authorize(Roles = "Admin, Operador")]
+        [HttpGet("{id:Guid}")]
+        public async Task<ActionResult<EmployeeUpdateViewModel>> GetById(Guid id)
+        {
+            var employeeDto = await _employeeService.GetDtoByIdWithIncludes(id);
+            if (employeeDto == null) return NotFound();
+
+            var result = _mapper.Map<EmployeeUpdateViewModel>(employeeDto.Employee);
+            result.Phones = employeeDto.Phones;
+
+            return result;
+        }
+
+        [Authorize(Roles = "Admin, Operador")]
+        [HttpPut("Disable/{id:Guid}")]
+        public async Task<ActionResult> Disable(Guid id)
+        {
+            var directDeliverer = await _employeeService.GetById(id);
+            if (directDeliverer == null) return NotFound();
+
+            await _employeeService.Disable(directDeliverer.UserId);
+            return CustomResponse();
+        }
+
+        [Authorize(Roles = "Admin, Operador")]
+        [HttpPut("Enable/{id:Guid}")]
+        public async Task<ActionResult> Enable(Guid id)
+        {
+            var directDeliverer = await _employeeService.GetById(id);
+            if (directDeliverer == null) return NotFound();
+
+            await _employeeService.Enable(directDeliverer.UserId);
+            return CustomResponse();
+        }
+
+        [Authorize(Roles = "Admin, Operador")]
+        [HttpPut]
+        public async Task<ActionResult<EmployeeUpdateViewModel>> Update(EmployeeUpdateViewModel userViewModel)
+        {
+            if (!ModelState.IsValid) return CustomResponse(ModelState);
+
+            var employee = await _employeeService.GetByIdWithIncludesTracked(userViewModel.Id);
+            MappingUpdate(userViewModel, employee);
+
+            var employeeDto = new EmployeeDto(employee, userViewModel.Phones, userViewModel.Password);
+            await _employeeService.Update(employeeDto);
+
+            return CustomResponse(userViewModel);
+        }
+
+        private void MappingUpdate(EmployeeUpdateViewModel userViewModel, Employee employee)
+        {
+            _mapper.Map<EmployeeUpdateViewModel, Employee>
+                (userViewModel, employee);
+            _mapper.Map<EmployeeUpdateViewModel, ApplicationUser>
+                (userViewModel, employee.User);
+            _mapper.Map<EmployeeUpdateViewModel, PhysicalPerson>
+                (userViewModel, employee.User.PhysicalPerson);
         }
     }
 }

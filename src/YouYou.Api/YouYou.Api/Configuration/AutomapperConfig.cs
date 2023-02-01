@@ -53,6 +53,8 @@ namespace YouYou.Api.Configuration
                     UsefulFunctions.RemoveNonNumeric(c.CPF)))
                 .ForMember(x => x.Id, opt => opt.Ignore());
 
+            CreateMap<PhysicalPerson, BackOfficeUserUpdateViewModel>();
+
             CreateMap<BackOfficeUserUpdateViewModel, ApplicationUser>()
                 .ForMember(dest => dest.UserName, src => src.MapFrom(c => c.Email))
                 .ForMember(dest => dest.Email, src => src.MapFrom(c => c.Email))
@@ -69,6 +71,8 @@ namespace YouYou.Api.Configuration
                 .ForMember(dest => dest.CPF, src => src.MapFrom(c => c.User.PhysicalPerson.CPF))
                 .ForMember(dest => dest.Email, src => src.MapFrom(c => c.User.Email))
                 .ForMember(dest => dest.Role, opt => opt.MapFrom<TranslateResolver, string>(src => src.User.UserRoles.FirstOrDefault().Role.Name))
+                .ForMember(dest => dest.Birthday, src => src.MapFrom(c => c.User.PhysicalPerson.Birthday))
+                .ForMember(dest => dest.GenderName, src => src.MapFrom(c => c.User.PhysicalPerson.Gender.TypeGender.Name))
                 .ForMember(dest => dest.Disabled, src => src.MapFrom(c => c.User.Disabled));
 
             CreateMap<BackOfficeUser, BackOfficeUserCreateViewModel>()
@@ -89,15 +93,36 @@ namespace YouYou.Api.Configuration
 
             CreateMap<EmployeeCreateViewModel, PhysicalPerson>()
                 .ForMember(dest => dest.CPF, src => src.MapFrom(c =>
-                    UsefulFunctions.RemoveNonNumeric(c.CPF))).ReverseMap();
+                    UsefulFunctions.RemoveNonNumeric(c.CPF))).ReverseMap()
+                .ForMember(dest => dest.Gender, src => src.MapFrom(c => c.Gender));
 
             CreateMap<Employee, EmployeeListViewModel>()
                 .ForMember(dest => dest.Name, src => src.MapFrom(dd => dd.User.PhysicalPerson.Name))
                 .ForMember(dest => dest.NickName, src => src.MapFrom(dd => dd.User.NickName))
                 .ForMember(dest => dest.City, src => src.MapFrom(dd => dd.Address.City.Name))
                 .ForMember(dest => dest.RolesNames, src => src.MapFrom(dd => dd.User.UserRoles.Select(r => r.Role.Name)))
-                .ForMember(dest => dest.GenderName, src => src.MapFrom(dd => dd.Gender.TypeGender.Name))
+                .ForMember(dest => dest.GenderName, src => src.MapFrom(dd => dd.User.PhysicalPerson.Gender.TypeGender.Name))
                 .ForMember(dest => dest.Disabled, src => src.MapFrom(dd => dd.User.Disabled));
+
+            CreateMap<EmployeeUpdateViewModel, Employee>().ReverseMap()
+                .ForMember(dest => dest.Email, src => src.MapFrom(c => c.User.Email))
+                .ForMember(dest => dest.CPF, src => src.MapFrom(c => c.User.PhysicalPerson.CPF))
+                .ForMember(dest => dest.Name, src => src.MapFrom(c => c.User.PhysicalPerson.Name))
+                .ForMember(dest => dest.NickName, src => src.MapFrom(c => c.User.NickName))
+                .ForMember(dest => dest.Address, src => src.MapFrom(c => c.Address))
+                .ForMember(dest => dest.BankData, src => src.MapFrom(c => c.BankData))
+                .ForMember(dest => dest.DocumentPhotos, src => src.MapFrom(c => c.DocumentPhotos));
+
+            CreateMap<EmployeeUpdateViewModel, ApplicationUser>()
+                .ForMember(dest => dest.UserName, src => src.MapFrom(c =>
+                    UsefulFunctions.RemoveNonNumeric(c.CPF)))
+                .ForMember(x => x.Id, opt => opt.Ignore());
+
+            CreateMap<EmployeeUpdateViewModel, PhysicalPerson>()
+                .ForMember(dest => dest.CPF, src => src.MapFrom(c =>
+                    UsefulFunctions.RemoveNonNumeric(c.CPF)))
+                .ForMember(x => x.Id, opt => opt.Ignore())
+                .ForMember(dest => dest.Gender, src => src.MapFrom(c => c.Gender));
 
             #endregion
 

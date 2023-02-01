@@ -18,6 +18,8 @@ namespace YouYou.Data.Repository
             return await Db.BackOfficeUsers.AsNoTracking().OrderBy(o => o.User.PhysicalPerson.Name)
                 .Include(c => c.User)
                     .ThenInclude(c => c.PhysicalPerson)
+                        .ThenInclude(p => p.Gender)
+                            .ThenInclude(g => g.TypeGender)
                 .Include(c => c.User)
                     .ThenInclude(c => c.UserRoles)
                         .ThenInclude(c => c.Role)
@@ -45,6 +47,8 @@ namespace YouYou.Data.Repository
             return await Db.BackOfficeUsers.AsNoTracking()
                 .Include(c => c.User)
                     .ThenInclude(c => c.PhysicalPerson)
+                        .ThenInclude(p => p.Gender)
+                            .ThenInclude(g => g.TypeGender)
                 .Include(c => c.User)
                     .ThenInclude(c => c.UserRoles)
                 .FirstOrDefaultAsync(c => c.Id == id);

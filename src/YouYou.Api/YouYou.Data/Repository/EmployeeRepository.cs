@@ -17,13 +17,13 @@ namespace YouYou.Data.Repository
             return await Db.Employees.AsNoTracking().OrderBy(o => o.User.PhysicalPerson.Name)
                     .Include(d => d.User)
                         .ThenInclude(u => u.PhysicalPerson)
+                            .ThenInclude(e => e.Gender)
+                                .ThenInclude(g => g.TypeGender)
                     .Include(d => d.User)
                         .ThenInclude(u => u.UserRoles)
                             .ThenInclude(r => r.Role)
                     .Include(d => d.Address)
                         .ThenInclude(a => a.City)
-                    .Include(e => e.Gender)
-                        .ThenInclude(g => g.TypeGender)
                 .Where(ExpressionFilter(filter))
                 .Skip((filter.PageNumber - 1) * filter.PageSize)
                 .Take(filter.PageSize)
@@ -46,6 +46,35 @@ namespace YouYou.Data.Repository
                         dd.User.NickName.Contains(filter.NickName) &&
                         dd.Address.City.Name.Contains(filter.City ?? string.Empty) &&
                         dd.User.IsDeleted == false;
+        }
+        public async Task<Employee> GetByIdWithIncludes(Guid id)
+        {
+            return await Db.Employees.AsNoTracking()
+                .Include(d => d.User)
+                    .ThenInclude(u => u.PhysicalPerson)
+                        .ThenInclude(d => d.Gender)
+                            .ThenInclude(g => g.TypeGender)
+                .Include(dd => dd.User)
+                    .ThenInclude(d => d.ExtraPhones)
+                .Include(d => d.Address)
+                    .ThenInclude(a => a.City)
+                .Include(dd => dd.BankData)
+                .Include(dd => dd.DocumentPhotos)
+                .FirstOrDefaultAsync(c => c.Id == id);
+        }
+        public async Task<Employee> GetByIdWithIncludesTracked(Guid id)
+        {
+            return await Db.Employees.AsTracking()
+                .Include(d => d.User)
+                    .ThenInclude(u => u.PhysicalPerson)
+                        .ThenInclude(d => d.Gender)
+                            .ThenInclude(g => g.TypeGender)
+                .Include(dd => dd.User)
+                    .ThenInclude(d => d.ExtraPhones)
+                .Include(d => d.Address)
+                .Include(dd => dd.BankData)
+                .Include(dd => dd.DocumentPhotos)
+                .FirstOrDefaultAsync(c => c.Id == id);
         }
     }
 }
