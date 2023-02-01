@@ -3,6 +3,7 @@ using YouYou.Business.ErrorNotifications;
 using YouYou.Business.Interfaces;
 using YouYou.Business.Interfaces.BackOfficeUsers;
 using YouYou.Business.Interfaces.BankDatas;
+using YouYou.Business.Interfaces.Clients;
 using YouYou.Business.Interfaces.Employees;
 using YouYou.Business.Interfaces.ExtraPhones;
 using YouYou.Business.Interfaces.PhysicalPersons;
@@ -50,6 +51,9 @@ namespace YouYou.Api.Configuration
             services.AddScoped<IEmployeeService, EmployeeService>();
 
             services.AddScoped<IBankDataService, BankDataService>();
+
+            services.AddScoped<IClientRepository, ClientRepository>();
+            services.AddScoped<IClientService, ClientService>();
 
             return services;
         }

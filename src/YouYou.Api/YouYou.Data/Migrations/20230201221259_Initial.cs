@@ -245,7 +245,6 @@ namespace YouYou.Data.Migrations
                     Id = table.Column<Guid>(nullable: false),
                     CNPJ = table.Column<string>(type: "varchar(14)", nullable: false),
                     CompanyName = table.Column<string>(type: "varchar(256)", nullable: false),
-                    TradingName = table.Column<string>(type: "varchar(256)", nullable: false),
                     UserId = table.Column<Guid>(nullable: false)
                 },
                 constraints: table =>
@@ -355,7 +354,6 @@ namespace YouYou.Data.Migrations
                 {
                     Id = table.Column<Guid>(nullable: false),
                     AddressId = table.Column<Guid>(nullable: false),
-                    BankDataId = table.Column<Guid>(nullable: false),
                     UserId = table.Column<Guid>(nullable: false)
                 },
                 constraints: table =>
@@ -365,12 +363,6 @@ namespace YouYou.Data.Migrations
                         name: "FK_Clients_Addresses_AddressId",
                         column: x => x.AddressId,
                         principalTable: "Addresses",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_Clients_BankData_BankDataId",
-                        column: x => x.BankDataId,
-                        principalTable: "BankData",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
@@ -490,12 +482,6 @@ namespace YouYou.Data.Migrations
                 name: "IX_Clients_AddressId",
                 table: "Clients",
                 column: "AddressId",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Clients_BankDataId",
-                table: "Clients",
-                column: "BankDataId",
                 unique: true);
 
             migrationBuilder.CreateIndex(

@@ -9,7 +9,7 @@ using YouYou.Data.Context;
 namespace YouYou.Data.Migrations
 {
     [DbContext(typeof(YouYouContext))]
-    [Migration("20230201204000_Initial")]
+    [Migration("20230201221259_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -353,18 +353,12 @@ namespace YouYou.Data.Migrations
                     b.Property<Guid>("AddressId")
                         .HasColumnType("char(36)");
 
-                    b.Property<Guid>("BankDataId")
-                        .HasColumnType("char(36)");
-
                     b.Property<Guid>("UserId")
                         .HasColumnType("char(36)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("AddressId")
-                        .IsUnique();
-
-                    b.HasIndex("BankDataId")
                         .IsUnique();
 
                     b.HasIndex("UserId")
@@ -480,10 +474,6 @@ namespace YouYou.Data.Migrations
                         .HasColumnType("varchar(14)");
 
                     b.Property<string>("CompanyName")
-                        .IsRequired()
-                        .HasColumnType("varchar(256)");
-
-                    b.Property<string>("TradingName")
                         .IsRequired()
                         .HasColumnType("varchar(256)");
 
@@ -646,11 +636,6 @@ namespace YouYou.Data.Migrations
                     b.HasOne("YouYou.Business.Models.Address", "Address")
                         .WithOne()
                         .HasForeignKey("YouYou.Business.Models.Client", "AddressId")
-                        .IsRequired();
-
-                    b.HasOne("YouYou.Business.Models.BankData", "BankData")
-                        .WithOne()
-                        .HasForeignKey("YouYou.Business.Models.Client", "BankDataId")
                         .IsRequired();
 
                     b.HasOne("YouYou.Business.Models.ApplicationUser", "User")

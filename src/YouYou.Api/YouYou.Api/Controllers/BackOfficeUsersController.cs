@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Localization;
 using YouYou.Api.Helpers;
 using YouYou.Api.ViewModels.BackOfficeUsers;
+using YouYou.Api.ViewModels.Genders;
 using YouYou.Business.Interfaces;
 using YouYou.Business.Interfaces.BackOfficeUsers;
 using YouYou.Business.Interfaces.Users;
@@ -127,6 +128,8 @@ namespace YouYou.Api.Controllers
                 (userViewModel, backOfficeUser.User);
             _mapper.Map<BackOfficeUserUpdateViewModel, PhysicalPerson>
                 (userViewModel, backOfficeUser.User.PhysicalPerson);
+            _mapper.Map<BackOfficeUserUpdateViewModel, Gender>
+                (userViewModel, backOfficeUser.User.PhysicalPerson.Gender);
         }
         /// <summary>
         /// Endpoint para deletar logicamente um usuário do tipo 'Admin ou Operador'.

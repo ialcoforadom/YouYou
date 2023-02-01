@@ -18,9 +18,6 @@ namespace YouYou.Data.Mappings
                 .IsRequired()
                 .HasColumnType("varchar(256)");
 
-            builder.Property(c => c.TradingName)
-                .HasColumnType("varchar(256)");
-
             builder.ToTable("JuridicalPersons");
         }
     }

@@ -59,6 +59,8 @@ namespace YouYou.Data.Repository
             return await Db.BackOfficeUsers.AsTracking()
                 .Include(c => c.User)
                     .ThenInclude(c => c.PhysicalPerson)
+                        .ThenInclude(p => p.Gender)
+                            .ThenInclude(g => g.TypeGender)
                 .Include(c => c.User)
                     .ThenInclude(c => c.UserRoles)
                         .ThenInclude(c => c.Role)

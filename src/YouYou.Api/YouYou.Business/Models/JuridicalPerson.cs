@@ -10,8 +10,6 @@ namespace YouYou.Business.Models
 
         public string CompanyName { get; set; }
 
-        public string TradingName { get; set; }
-
         public Guid UserId { get; set; }
 
         public ApplicationUser User { get; set; }

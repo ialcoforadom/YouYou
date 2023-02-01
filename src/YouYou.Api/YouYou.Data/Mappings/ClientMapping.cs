@@ -13,9 +13,6 @@ namespace YouYou.Data.Mappings
             builder.HasOne(f => f.Address)
                 .WithOne();
 
-            builder.HasOne(f => f.BankData)
-                .WithOne();
-
             builder.HasOne(f => f.User)
                 .WithOne();
 
