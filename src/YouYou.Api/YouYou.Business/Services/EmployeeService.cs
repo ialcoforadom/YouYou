@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -36,13 +37,24 @@ namespace YouYou.Business.Services
             _bankDataService = bankDataService;
         }
 
-        public async Task Add(EmployeeDto employeeDto, Guid roleId)
+        public async Task Add(EmployeeDto employeeDto, IFormFile file)
         {
             var employee = employeeDto.Employee;
 
             if (!ExecuteValidation(new AddressValidation(), employee.Address) ||
                !ExecuteValidation(new PhysicalPersonValidation(), employee.User.PhysicalPerson) ||
                !ExecuteValidation(new BankDataValidation(), employee.BankData)) return;
+
+            if (file != null)
+            {
+                employee.User.FileName = file.FileName;
+
+                using (var target = new MemoryStream())
+                {
+                    await file.CopyToAsync(target);
+                    employee.User.DataFiles = target.ToArray();
+                }
+            }
 
             using (TransactionScope tr = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
             {
@@ -51,7 +63,7 @@ namespace YouYou.Business.Services
                 var succeeded = await _userService.Add(employee.User, employeeDto.Password);
                 if (succeeded)
                 {
-                    var roleSucceeded = await _userService.AddRole(employee.User, roleId);
+                    var roleSucceeded = await _userService.AddRoles(employee.User, employeeDto.Roles);
                     if (roleSucceeded)
                     {
                         await _employeeRepository.Add(employee);
@@ -86,10 +98,10 @@ namespace YouYou.Business.Services
         }
         public async Task<EmployeeDto> GetDtoByIdWithIncludes(Guid id)
         {
-            var directDeliverer = await _employeeRepository.GetByIdWithIncludes(id);
-            var phones = _extraPhoneService.MapperPhones(directDeliverer.User);
+            var employee = await _employeeRepository.GetByIdWithIncludes(id);
+            var phones = _extraPhoneService.MapperPhones(employee.User);
 
-            return new EmployeeDto(directDeliverer, phones);
+            return new EmployeeDto(employee, phones);
         }
         public async Task Disable(Guid userId)
         {
@@ -103,34 +115,45 @@ namespace YouYou.Business.Services
         {
             return await _employeeRepository.GetByIdWithIncludesTracked(id);
         }
-        public async Task Update(EmployeeDto employeeDto)
+        public async Task Update(EmployeeDto employeeDto, IFormFile file)
         {
-            var directDeliverer = employeeDto.Employee;
+            var employee = employeeDto.Employee;
 
-            if (!ExecuteValidation(new AddressValidation(), directDeliverer.Address) ||
-                !ExecuteValidation(new BankDataValidation(), directDeliverer.BankData) ||
-                !ExecuteValidation(new PhysicalPersonValidation(), directDeliverer.User.PhysicalPerson)) return;
+            if (!ExecuteValidation(new AddressValidation(), employee.Address) ||
+                !ExecuteValidation(new BankDataValidation(), employee.BankData) ||
+                !ExecuteValidation(new PhysicalPersonValidation(), employee.User.PhysicalPerson)) return;
+
+            if (file != null)
+            {
+                employee.User.FileName = file.FileName;
+
+                using (var target = new MemoryStream())
+                {
+                    await file.CopyToAsync(target);
+                    employee.User.DataFiles = target.ToArray();
+                }
+            }
 
             using (TransactionScope tr = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
             {
-                _bankDataService.SetCpfOrCnpjHolderInBankData(directDeliverer.BankData, directDeliverer.User.PhysicalPerson.CPF);
-                await _extraPhoneService.UpdatePhones(directDeliverer.User, employeeDto.Phones.ToList());
+                _bankDataService.SetCpfOrCnpjHolderInBankData(employee.BankData, employee.User.PhysicalPerson.CPF);
+                await _extraPhoneService.UpdatePhones(employee.User, employeeDto.Phones.ToList());
 
                 bool succeeded;
 
                 if (string.IsNullOrEmpty(employeeDto.Password))
-                {
-                    succeeded = await _userService.Update(directDeliverer.User);
-                }
+                    succeeded = await _userService.Update(employee.User);
                 else
-                {
-                    succeeded = await _userService.Update(directDeliverer.User, employeeDto.Password);
-                }
+                    succeeded = await _userService.Update(employee.User, employeeDto.Password);
 
                 if (succeeded)
                 {
-                    await _employeeRepository.Update(directDeliverer);
-                    tr.Complete();
+                    var role = await _userService.UpdateRoles(employee.User, employeeDto.Roles);
+                    if (role)
+                    {
+                        await _employeeRepository.Update(employee);
+                        tr.Complete();
+                    }
                 }
             }
         }

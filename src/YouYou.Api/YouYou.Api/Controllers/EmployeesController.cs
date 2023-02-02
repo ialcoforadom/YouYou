@@ -37,13 +37,14 @@ namespace YouYou.Api.Controllers
         /// <returns></returns>
         [Authorize(Roles = "Admin, Operador, Coordenador")]
         [HttpPost]
-        public async Task<ActionResult> Add(EmployeeCreateViewModel userViewModel)
+        public async Task<ActionResult> Add([ModelBinder(BinderType = typeof(JsonModelBinder))] EmployeeCreateViewModel userViewModel,
+            IFormFile? file)
         {
             if (!ModelState.IsValid) return CustomResponse(ModelState);
 
             EmployeeDto employee = Mapping(userViewModel);
 
-            await _employeeService.Add(employee, userViewModel.RoleId);
+            await _employeeService.Add(employee, file);
 
             return CustomResponse(userViewModel);
         }
@@ -54,7 +55,7 @@ namespace YouYou.Api.Controllers
             employee.User = _mapper.Map<ApplicationUser>(employeeVM);
             employee.User.PhysicalPerson = _mapper.Map<PhysicalPerson>(employeeVM);
 
-            return new EmployeeDto(employee, employeeVM.Phones, employeeVM.Password);
+            return new EmployeeDto(employee, employeeVM.Phones, employeeVM.Password, employeeVM.RolesId);
         }
         /// <summary>
         /// Endpoint para listar todos os funcionários
@@ -116,7 +117,11 @@ namespace YouYou.Api.Controllers
             await _employeeService.Remove(employee);
             return CustomResponse();
         }
-
+        /// <summary>
+        /// Endpoint que retornar um funcinário a partir do Id.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [Authorize(Roles = "Admin, Operador")]
         [HttpGet("{id:Guid}")]
         public async Task<ActionResult<EmployeeUpdateViewModel>> GetById(Guid id)
@@ -129,45 +134,59 @@ namespace YouYou.Api.Controllers
 
             return result;
         }
-
+        /// <summary>
+        /// Endpoint que desabilita um funcionário.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [Authorize(Roles = "Admin, Operador")]
         [HttpPut("Disable/{id:Guid}")]
         public async Task<ActionResult> Disable(Guid id)
         {
-            var directDeliverer = await _employeeService.GetById(id);
-            if (directDeliverer == null) return NotFound();
+            var employee = await _employeeService.GetById(id);
+            if (employee == null) return NotFound();
 
-            await _employeeService.Disable(directDeliverer.UserId);
+            await _employeeService.Disable(employee.UserId);
             return CustomResponse();
         }
-
+        /// <summary>
+        /// Endpoint que habilita um funcionário.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [Authorize(Roles = "Admin, Operador")]
         [HttpPut("Enable/{id:Guid}")]
         public async Task<ActionResult> Enable(Guid id)
         {
-            var directDeliverer = await _employeeService.GetById(id);
-            if (directDeliverer == null) return NotFound();
+            var employee = await _employeeService.GetById(id);
+            if (employee == null) return NotFound();
 
-            await _employeeService.Enable(directDeliverer.UserId);
+            await _employeeService.Enable(employee.UserId);
             return CustomResponse();
         }
-
+        /// <summary>
+        /// Endpoint que edita um funcionário.
+        /// </summary>
+        /// <param name="userViewModel"></param>
+        /// <param name="file"></param>
+        /// <returns></returns>
         [Authorize(Roles = "Admin, Operador")]
         [HttpPut]
-        public async Task<ActionResult<EmployeeUpdateViewModel>> Update(EmployeeUpdateViewModel userViewModel)
+        public async Task<ActionResult<EmployeeUpdateViewModel>> Update(
+            [ModelBinder(BinderType = typeof(JsonModelBinder))] EmployeeUpdateViewModel userViewModel, IFormFile? file)
         {
             if (!ModelState.IsValid) return CustomResponse(ModelState);
 
             var employee = await _employeeService.GetByIdWithIncludesTracked(userViewModel.Id);
-            MappingUpdate(userViewModel, employee);
 
-            var employeeDto = new EmployeeDto(employee, userViewModel.Phones, userViewModel.Password);
-            await _employeeService.Update(employeeDto);
+            var employeeDto = MappingUpdate(userViewModel, employee);
+
+            await _employeeService.Update(employeeDto, file);
 
             return CustomResponse(userViewModel);
         }
 
-        private void MappingUpdate(EmployeeUpdateViewModel userViewModel, Employee employee)
+        private EmployeeDto MappingUpdate(EmployeeUpdateViewModel userViewModel, Employee employee)
         {
             _mapper.Map<EmployeeUpdateViewModel, Employee>
                 (userViewModel, employee);
@@ -175,6 +194,8 @@ namespace YouYou.Api.Controllers
                 (userViewModel, employee.User);
             _mapper.Map<EmployeeUpdateViewModel, PhysicalPerson>
                 (userViewModel, employee.User.PhysicalPerson);
+
+            return new EmployeeDto(employee, userViewModel.Phones, userViewModel.Password, userViewModel.RolesId);
         }
     }
 }

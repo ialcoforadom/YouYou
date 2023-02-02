@@ -8,12 +8,6 @@ namespace YouYou.Business.Interfaces.Users
 
         Task<bool> Add(ApplicationUser user, string password);
 
-        Task<bool> AddRoleEditor(ApplicationUser user);
-
-        Task<bool> AddRolePhotography(ApplicationUser user);
-
-        Task<bool> AddRoleCoordinator(ApplicationUser user);
-
         Task<bool> Update(ApplicationUser user);
 
         Task<bool> Update(ApplicationUser user, string password);
@@ -21,12 +15,18 @@ namespace YouYou.Business.Interfaces.Users
         Task<bool> UpdatePassword(Guid id, string password);
 
         Task<bool> UpdateRole(ApplicationUser user, Guid newRoleId);
+        Task<bool> UpdateRoles(ApplicationUser user, ICollection<Guid> newRolesId);
 
         Task<bool> RemoveRole(ApplicationUser user, string role);
+        Task<bool> RemoveRoles(ApplicationUser user, ICollection<string> roles);
 
         Task<bool> AddRole(ApplicationUser user, string role);
 
         Task<bool> AddRole(ApplicationUser user, Guid roleId);
+
+        Task<bool> AddRoles(ApplicationUser user, ICollection<string> role);
+
+        Task<bool> AddRoles(ApplicationUser user, ICollection<Guid> roleId);
 
         ICollection<ApplicationRole> GetRoles();
 

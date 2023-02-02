@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using YouYou.Api.Extensions;
 using YouYou.Api.ViewModels.Addresses;
 using YouYou.Api.ViewModels.BankData;
-using YouYou.Api.ViewModels.DocumentPhotos;
 using YouYou.Api.ViewModels.Genders;
 
 namespace YouYou.Api.ViewModels.Employees
@@ -48,10 +47,8 @@ namespace YouYou.Api.ViewModels.Employees
         [Compare("Password", ErrorMessage = "As senhas não conferem.")]
         public string ConfirmPassword { get; set; }
 
-        public ICollection<DocumentPhotoCreateViewModel> DocumentPhotos { get; set; }
-
         [Required(ErrorMessage = "O campo {0} é obrigatório")]
-        public Guid RoleId { get; set; }
+        public ICollection<Guid> RolesId { get; set; }
 
     }
 }

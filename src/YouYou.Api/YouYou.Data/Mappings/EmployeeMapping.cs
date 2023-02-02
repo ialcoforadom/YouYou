@@ -15,14 +15,11 @@ namespace YouYou.Data.Mappings
                 .OnDelete(DeleteBehavior.Cascade);
 
             builder.HasOne(d => d.Address)
-                .WithOne();
+                .WithOne()
+                .OnDelete(DeleteBehavior.Cascade);
 
             builder.HasOne(d => d.BankData)
-                .WithOne();
-
-            builder.HasMany(d => d.DocumentPhotos)
-                .WithOne(d => d.Employee)
-                .HasForeignKey(d => d.EmployeeId)
+                .WithOne()
                 .OnDelete(DeleteBehavior.Cascade);
 
             builder.ToTable("Employees");

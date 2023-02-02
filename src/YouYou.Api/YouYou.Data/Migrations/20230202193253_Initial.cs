@@ -44,7 +44,10 @@ namespace YouYou.Data.Migrations
                     NickName = table.Column<string>(type: "varchar(256)", nullable: true),
                     IsCompany = table.Column<ulong>(type: "bit", nullable: false, defaultValue: 0ul),
                     Disabled = table.Column<ulong>(type: "bit", nullable: false, defaultValue: 0ul),
-                    IsDeleted = table.Column<ulong>(type: "bit", nullable: false, defaultValue: 0ul)
+                    IsDeleted = table.Column<ulong>(type: "bit", nullable: false, defaultValue: 0ul),
+                    CreatedAt = table.Column<DateTime>(type: "datetime", nullable: true),
+                    DataFiles = table.Column<byte[]>(type: "LONGBLOB", nullable: true),
+                    FileName = table.Column<string>(type: "varchar(256)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -339,7 +342,7 @@ namespace YouYou.Data.Migrations
                         column: x => x.GenderId,
                         principalTable: "Genders",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_PhysicalPersons_AspNetUsers_UserId",
                         column: x => x.UserId,
@@ -364,13 +367,13 @@ namespace YouYou.Data.Migrations
                         column: x => x.AddressId,
                         principalTable: "Addresses",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Clients_AspNetUsers_UserId",
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -390,38 +393,17 @@ namespace YouYou.Data.Migrations
                         column: x => x.AddressId,
                         principalTable: "Addresses",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Employees_BankData_BankDataId",
                         column: x => x.BankDataId,
                         principalTable: "BankData",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Employees_AspNetUsers_UserId",
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "DocumentPhotos",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(nullable: false),
-                    Name = table.Column<string>(type: "varchar(256)", nullable: false),
-                    FileType = table.Column<string>(type: "varchar(100)", nullable: false),
-                    DataFiles = table.Column<byte[]>(type: "LONGBLOB", nullable: false),
-                    EmployeeId = table.Column<Guid>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_DocumentPhotos", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_DocumentPhotos_Employees_EmployeeId",
-                        column: x => x.EmployeeId,
-                        principalTable: "Employees",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -489,11 +471,6 @@ namespace YouYou.Data.Migrations
                 table: "Clients",
                 column: "UserId",
                 unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "IX_DocumentPhotos_EmployeeId",
-                table: "DocumentPhotos",
-                column: "EmployeeId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Employees_AddressId",
@@ -566,7 +543,7 @@ namespace YouYou.Data.Migrations
                 name: "Clients");
 
             migrationBuilder.DropTable(
-                name: "DocumentPhotos");
+                name: "Employees");
 
             migrationBuilder.DropTable(
                 name: "ExtraPhones");
@@ -581,25 +558,22 @@ namespace YouYou.Data.Migrations
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
-                name: "Employees");
-
-            migrationBuilder.DropTable(
-                name: "Genders");
-
-            migrationBuilder.DropTable(
                 name: "Addresses");
 
             migrationBuilder.DropTable(
                 name: "BankData");
 
             migrationBuilder.DropTable(
+                name: "Genders");
+
+            migrationBuilder.DropTable(
                 name: "AspNetUsers");
 
             migrationBuilder.DropTable(
-                name: "TypeGenders");
+                name: "Cities");
 
             migrationBuilder.DropTable(
-                name: "Cities");
+                name: "TypeGenders");
 
             migrationBuilder.DropTable(
                 name: "States");

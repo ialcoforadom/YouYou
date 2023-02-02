@@ -9,7 +9,6 @@ using YouYou.Api.ViewModels.Addresses;
 using YouYou.Api.ViewModels.BackOfficeUsers;
 using YouYou.Api.ViewModels.BankData;
 using YouYou.Api.ViewModels.Clients;
-using YouYou.Api.ViewModels.DocumentPhotos;
 using YouYou.Api.ViewModels.Employees;
 using YouYou.Api.ViewModels.Genders;
 using YouYou.Api.ViewModels.Users;
@@ -39,6 +38,10 @@ namespace YouYou.Api.Configuration
                 .ForMember(dest => dest.PageSize, src => src.MapFrom(src => src.PageSize > 50 ? 50 : src.PageSize));
 
             CreateMap<EmployeeFilter, EmployeeFilter>()
+                .ForMember(dest => dest.PageNumber, src => src.MapFrom(src => src.PageNumber < 1 ? 1 : src.PageNumber))
+                .ForMember(dest => dest.PageSize, src => src.MapFrom(src => src.PageSize > 50 ? 50 : src.PageSize));
+
+            CreateMap<ClientFilter, ClientFilter>()
                 .ForMember(dest => dest.PageNumber, src => src.MapFrom(src => src.PageNumber < 1 ? 1 : src.PageNumber))
                 .ForMember(dest => dest.PageSize, src => src.MapFrom(src => src.PageSize > 50 ? 50 : src.PageSize));
             #endregion
@@ -119,7 +122,7 @@ namespace YouYou.Api.Configuration
                 .ForMember(dest => dest.BankData, src => src.MapFrom(c => c.BankData))
                 .ForMember(dest => dest.Birthday, src => src.MapFrom(c => c.User.PhysicalPerson.Birthday))
                 .ForMember(dest => dest.Gender, src => src.MapFrom(c => c.User.PhysicalPerson.Gender))
-                .ForMember(dest => dest.DocumentPhotos, src => src.MapFrom(c => c.DocumentPhotos));
+                .ForMember(dest => dest.RolesId, src => src.MapFrom(c => c.User.UserRoles.Select(c => c.RoleId).ToList()));
 
             CreateMap<EmployeeUpdateViewModel, ApplicationUser>()
                 .ForMember(dest => dest.UserName, src => src.MapFrom(c =>
@@ -149,12 +152,6 @@ namespace YouYou.Api.Configuration
                     UsefulFunctions.RemoveNonNumeric(c.CpfOrCnpjHolder))).ReverseMap();
             #endregion
 
-            #region DocumentPhoto
-            CreateMap<DocumentPhotoCreateViewModel, DocumentPhoto>()
-                .ForMember(dest => dest.FileType, src => src.MapFrom(src => src.Name.Substring(src.Name.LastIndexOf('.') + 1)))
-                .ForMember(dest => dest.DataFiles, src => src.MapFrom(src => Convert.FromBase64String(src.DataFiles)));
-            #endregion
-
             #region Gender
             CreateMap<GenderViewModel, Gender>();
             CreateMap<GenderViewModel, Gender>().ReverseMap();
@@ -176,6 +173,41 @@ namespace YouYou.Api.Configuration
                 .ForMember(dest => dest.CompanyName, src => src.MapFrom(c => c.Name))
                 .ForMember(dest => dest.CNPJ, src => src.MapFrom(c =>
                     UsefulFunctions.RemoveNonNumeric(c.CpfOrCnpj))).ReverseMap();
+
+            CreateMap<Client, ClientListViewModel>()
+                .ForMember(dest => dest.Name, src => src.MapFrom(dd => dd.User.IsCompany ? dd.User.JuridicalPerson.CompanyName : dd.User.PhysicalPerson.Name))
+                .ForMember(dest => dest.NickName, src => src.MapFrom(dd => dd.User.NickName))
+                .ForMember(dest => dest.City, src => src.MapFrom(dd => dd.Address.City.Name))
+                .ForMember(dest => dest.RolesNames, src => src.MapFrom(dd => dd.User.UserRoles.Select(r => r.Role.Name)))
+                .ForMember(dest => dest.GenderName, src => src.MapFrom(dd => dd.User.PhysicalPerson.Gender.TypeGender.Name))
+                .ForMember(dest => dest.Disabled, src => src.MapFrom(dd => dd.User.Disabled))
+                .ForMember(dest => dest.Birthday, src => src.MapFrom(dd => dd.User.PhysicalPerson.Birthday));
+
+            CreateMap<ClientUpdateViewModel, Client>().ReverseMap()
+                .ForMember(dest => dest.Email, src => src.MapFrom(c => c.User.Email))
+                .ForMember(dest => dest.CpfOrCnpj, src => src.MapFrom(c => c.User.IsCompany ? c.User.JuridicalPerson.CNPJ : c.User.PhysicalPerson.CPF))
+                .ForMember(dest => dest.Name, src => src.MapFrom(c => c.User.IsCompany ? c.User.JuridicalPerson.CompanyName : c.User.PhysicalPerson.Name))
+                .ForMember(dest => dest.Address, src => src.MapFrom(c => c.Address))
+                .ForMember(dest => dest.Birthday, src => src.MapFrom(c => c.User.PhysicalPerson.Birthday))
+                .ForMember(dest => dest.Gender, src => src.MapFrom(c => c.User.PhysicalPerson.Gender))
+                .ForMember(dest => dest.RolesId, src => src.MapFrom(c => c.User.UserRoles.Select(c => c.RoleId).ToList()));
+
+            CreateMap<ClientUpdateViewModel, ApplicationUser>()
+                .ForMember(dest => dest.UserName, src => src.MapFrom(c =>
+                    UsefulFunctions.RemoveNonNumeric(c.CpfOrCnpj)))
+                .ForMember(x => x.Id, opt => opt.Ignore());
+
+            CreateMap<ClientUpdateViewModel, PhysicalPerson>()
+                .ForMember(dest => dest.CPF, src => src.MapFrom(c =>
+                    UsefulFunctions.RemoveNonNumeric(c.CpfOrCnpj)))
+                .ForMember(x => x.Id, opt => opt.Ignore())
+                .ForMember(dest => dest.Gender, src => src.MapFrom(c => c.Gender));
+
+            CreateMap<ClientUpdateViewModel, JuridicalPerson>()
+                .ForMember(dest => dest.CompanyName, src => src.MapFrom(c => c.Name))
+                .ForMember(dest => dest.CNPJ, src => src.MapFrom(c =>
+                    UsefulFunctions.RemoveNonNumeric(c.CpfOrCnpj)))
+                .ForMember(x => x.Id, opt => opt.Ignore());
             #endregion
         }
 

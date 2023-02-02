@@ -72,6 +72,8 @@ namespace YouYou.Api
                 // app.UseHsts();
             }
 
+            //app.UseCors(c => c.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
+
             app.UseGlobalization();
 
             app.UseAuthentication();

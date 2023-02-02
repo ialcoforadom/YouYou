@@ -1,4 +1,5 @@
-﻿using System.Transactions;
+﻿using Microsoft.AspNetCore.Http;
+using System.Transactions;
 using YouYou.Business.Interfaces;
 using YouYou.Business.Interfaces.BackOfficeUsers;
 using YouYou.Business.Interfaces.Users;
@@ -19,9 +20,20 @@ namespace YouYou.Business.Services
             _backOfficeUserRepository = backOfficeUserRepository;
             _userService = userService;
         }
-        public async Task Add(BackOfficeUser backOfficeUser, string password, Guid roleId)
+        public async Task Add(BackOfficeUser backOfficeUser, string password, Guid roleId, IFormFile file)
         {
             if (!ExecuteValidation(backOfficeUser)) return;
+
+            if (file != null)
+            {
+                backOfficeUser.User.FileName = file.FileName;
+
+                using (var target = new MemoryStream())
+                {
+                    await file.CopyToAsync(target);
+                    backOfficeUser.User.DataFiles = target.ToArray();
+                }
+            }
 
             using (TransactionScope tr = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
             {
@@ -54,7 +66,7 @@ namespace YouYou.Business.Services
             return await _backOfficeUserRepository.GetByIdWithIncludesTracked(id);
         }
 
-        public async Task Update(BackOfficeUser backOfficeUser, string password, Guid roleId)
+        public async Task Update(BackOfficeUser backOfficeUser, string password, Guid roleId, IFormFile file)
         {
             if (!ExecuteValidation(backOfficeUser)) return;
 

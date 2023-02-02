@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,7 +11,7 @@ namespace YouYou.Business.Interfaces.Employees
 {
     public interface IEmployeeService : IDisposable
     {
-        Task Add(EmployeeDto employeeDto, Guid roleId);
+        Task Add(EmployeeDto employeeDto, IFormFile file);
         Task<IEnumerable<Employee>> GetAllWithIncludes(EmployeeFilter filter);
         Task<int> GetTotalRecords(EmployeeFilter filter); 
         Task<Employee> GetById(Guid id); 
@@ -19,6 +20,6 @@ namespace YouYou.Business.Interfaces.Employees
         Task Disable(Guid id);
         Task Enable(Guid id); 
         Task<Employee> GetByIdWithIncludesTracked(Guid id);
-        Task Update(EmployeeDto employeeDto);
+        Task Update(EmployeeDto employeeDto, IFormFile file);
     }
 }

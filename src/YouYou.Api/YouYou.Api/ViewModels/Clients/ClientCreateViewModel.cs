@@ -33,6 +33,6 @@ namespace YouYou.Api.ViewModels.Clients
 
         [Required(ErrorMessage = "O campo {0} é obrigatório")]
         public AddressViewModel Address { get; set; }
-        public Guid RoleId { get; set; }
+        public ICollection<Guid> RolesId { get; set; }
     }
 }

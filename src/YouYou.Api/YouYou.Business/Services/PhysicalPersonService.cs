@@ -15,21 +15,21 @@ namespace YouYou.Business.Services
             _physicalPersonRepository = physicalPersonRepository;
         }
 
-        public async Task<bool> Add(PhysicalPerson physicalPerson)
-        {
-            if (!ExecuteValidation(new PhysicalPersonValidation(), physicalPerson)) return false;
+        //public async Task<bool> Add(PhysicalPerson physicalPerson)
+        //{
+        //    if (!ExecuteValidation(new PhysicalPersonValidation(), physicalPerson)) return false;
 
-            await _physicalPersonRepository.Add(physicalPerson);
+        //    await _physicalPersonRepository.Add(physicalPerson);
 
-            return true;
-        }
+        //    return true;
+        //}
 
-        public async Task Update(PhysicalPerson physicalPerson)
-        {
-            if (!ExecuteValidation(new PhysicalPersonValidation(), physicalPerson)) return;
+        //public async Task Update(PhysicalPerson physicalPerson)
+        //{
+        //    if (!ExecuteValidation(new PhysicalPersonValidation(), physicalPerson)) return;
 
-            await _physicalPersonRepository.Update(physicalPerson);
-        }
+        //    await _physicalPersonRepository.Update(physicalPerson);
+        //}
 
         public void Dispose()
         {

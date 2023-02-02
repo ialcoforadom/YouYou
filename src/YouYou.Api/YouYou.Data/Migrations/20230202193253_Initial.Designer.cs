@@ -9,7 +9,7 @@ using YouYou.Data.Context;
 namespace YouYou.Data.Migrations
 {
     [DbContext(typeof(YouYouContext))]
-    [Migration("20230201221259_Initial")]
+    [Migration("20230202193253_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -183,6 +183,12 @@ namespace YouYou.Data.Migrations
                         .IsConcurrencyToken()
                         .HasColumnType("longtext CHARACTER SET utf8mb4");
 
+                    b.Property<DateTime?>("CreatedAt")
+                        .HasColumnType("datetime");
+
+                    b.Property<byte[]>("DataFiles")
+                        .HasColumnType("LONGBLOB");
+
                     b.Property<ulong>("Disabled")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
@@ -194,6 +200,9 @@ namespace YouYou.Data.Migrations
 
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("tinyint(1)");
+
+                    b.Property<string>("FileName")
+                        .HasColumnType("varchar(256)");
 
                     b.Property<ulong>("IsCompany")
                         .ValueGeneratedOnAdd()
@@ -365,34 +374,6 @@ namespace YouYou.Data.Migrations
                         .IsUnique();
 
                     b.ToTable("Clients");
-                });
-
-            modelBuilder.Entity("YouYou.Business.Models.DocumentPhoto", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)");
-
-                    b.Property<byte[]>("DataFiles")
-                        .IsRequired()
-                        .HasColumnType("LONGBLOB");
-
-                    b.Property<Guid>("EmployeeId")
-                        .HasColumnType("char(36)");
-
-                    b.Property<string>("FileType")
-                        .IsRequired()
-                        .HasColumnType("varchar(100)");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("varchar(256)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("EmployeeId");
-
-                    b.ToTable("DocumentPhotos");
                 });
 
             modelBuilder.Entity("YouYou.Business.Models.Employee", b =>
@@ -636,19 +617,12 @@ namespace YouYou.Data.Migrations
                     b.HasOne("YouYou.Business.Models.Address", "Address")
                         .WithOne()
                         .HasForeignKey("YouYou.Business.Models.Client", "AddressId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("YouYou.Business.Models.ApplicationUser", "User")
                         .WithOne()
                         .HasForeignKey("YouYou.Business.Models.Client", "UserId")
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("YouYou.Business.Models.DocumentPhoto", b =>
-                {
-                    b.HasOne("YouYou.Business.Models.Employee", "Employee")
-                        .WithMany("DocumentPhotos")
-                        .HasForeignKey("EmployeeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -658,11 +632,13 @@ namespace YouYou.Data.Migrations
                     b.HasOne("YouYou.Business.Models.Address", "Address")
                         .WithOne()
                         .HasForeignKey("YouYou.Business.Models.Employee", "AddressId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("YouYou.Business.Models.BankData", "BankData")
                         .WithOne()
-                        .HasForeignKey("YouYou.Business.Models.Employee", "BankDataId");
+                        .HasForeignKey("YouYou.Business.Models.Employee", "BankDataId")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("YouYou.Business.Models.ApplicationUser", "User")
                         .WithOne()
@@ -701,6 +677,7 @@ namespace YouYou.Data.Migrations
                     b.HasOne("YouYou.Business.Models.Gender", "Gender")
                         .WithOne()
                         .HasForeignKey("YouYou.Business.Models.PhysicalPerson", "GenderId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("YouYou.Business.Models.ApplicationUser", "User")

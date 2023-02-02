@@ -23,7 +23,8 @@ namespace YouYou.Data.Mappings
                 .HasColumnType("datetime");
 
             builder.HasOne(d => d.Gender)
-                .WithOne();
+                .WithOne()
+                .OnDelete(DeleteBehavior.Cascade);
 
             builder.ToTable("PhysicalPersons");
         }

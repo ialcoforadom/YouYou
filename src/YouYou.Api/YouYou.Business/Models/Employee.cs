@@ -14,7 +14,5 @@
         public Guid? BankDataId { get; set; }
 
         public BankData BankData { get; set; }
-
-        public ICollection<DocumentPhoto> DocumentPhotos { get; set; }
     }
 }

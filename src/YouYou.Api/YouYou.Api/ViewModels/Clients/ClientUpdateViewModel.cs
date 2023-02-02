@@ -1,12 +1,11 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using YouYou.Api.Extensions;
 using YouYou.Api.ViewModels.Addresses;
-using YouYou.Api.ViewModels.BankData;
 using YouYou.Api.ViewModels.Genders;
 
-namespace YouYou.Api.ViewModels.Employees
+namespace YouYou.Api.ViewModels.Clients
 {
-    public class EmployeeUpdateViewModel
+    public class ClientUpdateViewModel
     {
         [Key]
         [Required(ErrorMessage = "O campo {0} é obrigatório")]
@@ -16,14 +15,17 @@ namespace YouYou.Api.ViewModels.Employees
         [StringLength(256, ErrorMessage = "O campo {0} precisa ter entre {2} e {1} caracteres", MinimumLength = 2)]
         public string Name { get; set; }
 
-        public string NickName { get; set; }
-
         [Required(ErrorMessage = "O campo {0} é obrigatório")]
-        [CPFValidation(ErrorMessage = "O campo {0} está em formato inválido")]
-        public string CPF { get; set; }
+        [CpfOrCnpjValidation(ErrorMessage = "O campo {0} está em formato inválido")]
+        public string CpfOrCnpj { get; set; }
 
-        [Required(ErrorMessage = "O campo {0} é obrigatório")]
-        public DateTime Birthday { get; set; }
+        public string? Email { get; set; }
+        public DateTime? Birthday { get; set; }
+        public GenderViewModel? Gender { get; set; }
+        public string? Password { get; set; }
+
+        [Compare("Password", ErrorMessage = "As senhas não conferem.")]
+        public string? ConfirmPassword { get; set; }
 
         [Required(ErrorMessage = "O campo {0} é obrigatório")]
         [StringLengthList(13, ErrorMessage = "O campo {0} precisa ter entre {2} e {1} caracteres", MinimumLength = 8)]
@@ -31,20 +33,6 @@ namespace YouYou.Api.ViewModels.Employees
 
         [Required(ErrorMessage = "O campo {0} é obrigatório")]
         public AddressViewModel Address { get; set; }
-
-        [Required(ErrorMessage = "O campo {0} é obrigatório")]
-        public GenderViewModel Gender { get; set; }
-
-        [Required(ErrorMessage = "O campo {0} é obrigatório")]
-        public BankDataViewModel BankData { get; set; }
-
-        public string Email { get; set; }
-
-        public string? Password { get; set; }
-
-        public string? ConfirmPassword { get; set; }
-
         public ICollection<Guid> RolesId { get; set; }
-
     }
 }

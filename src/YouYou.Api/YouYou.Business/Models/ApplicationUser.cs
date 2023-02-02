@@ -14,6 +14,9 @@ namespace YouYou.Business.Models
         public bool Disabled { get; set; }
 
         public bool IsDeleted { get; set; }
+        public DateTime? CreatedAt { get; set; }
+        public byte[]? DataFiles { get; set; }
+        public string? FileName { get; set; }
 
         public ICollection<ApplicationUserRole> UserRoles { get; set; }
 

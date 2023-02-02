@@ -40,13 +40,13 @@ namespace YouYou.Api.Controllers
         /// <param name="userViewModel"></param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<ActionResult> Add(BackOfficeUserCreateViewModel userViewModel)
+        public async Task<ActionResult> Add([ModelBinder(BinderType = typeof(JsonModelBinder))] BackOfficeUserCreateViewModel userViewModel, IFormFile? file)
         {
             if (!ModelState.IsValid) return CustomResponse(ModelState);
 
             var backOfficeUser = new BackOfficeUser(userViewModel.Name, userViewModel.CPF, userViewModel.Email, userViewModel.Birthday, userViewModel.Gender.TypeGenderId, userViewModel.Gender.Description);
 
-            await _backOfficeUserService.Add(backOfficeUser, userViewModel.Password, userViewModel.RoleId);
+            await _backOfficeUserService.Add(backOfficeUser, userViewModel.Password, userViewModel.RoleId, file);
             return CustomResponse(userViewModel);
         }
         /// <summary>
@@ -111,7 +111,7 @@ namespace YouYou.Api.Controllers
         /// <param name="userViewModel"></param>
         /// <returns></returns>
         [HttpPut]
-        public async Task<ActionResult<BackOfficeUserUpdateViewModel>> Update(BackOfficeUserUpdateViewModel userViewModel)
+        public async Task<ActionResult<BackOfficeUserUpdateViewModel>> Update([ModelBinder(BinderType = typeof(JsonModelBinder))] BackOfficeUserUpdateViewModel userViewModel, IFormFile? file)
         {
             if (!ModelState.IsValid) return CustomResponse(ModelState);
 
@@ -119,7 +119,7 @@ namespace YouYou.Api.Controllers
 
             MappingUpdate(userViewModel, backOfficeUser);
 
-            await _backOfficeUserService.Update(backOfficeUser, userViewModel.Password, userViewModel.RoleId);
+            await _backOfficeUserService.Update(backOfficeUser, userViewModel.Password, userViewModel.RoleId, file);
             return CustomResponse(userViewModel);
         }
         private void MappingUpdate(BackOfficeUserUpdateViewModel userViewModel, BackOfficeUser backOfficeUser)

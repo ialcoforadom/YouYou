@@ -31,6 +31,7 @@ namespace YouYou.Business.Services
 
         public async Task<bool> Add(ApplicationUser user, string password)
         {
+            user.CreatedAt = DateTime.Now;
             var result = await _userManager.CreateAsync(user, password);
 
             if (result.Succeeded)
@@ -44,20 +45,6 @@ namespace YouYou.Business.Services
             }
 
             return false;
-        }
-
-        public async Task<bool> AddRoleEditor(ApplicationUser user)
-        {
-            string role = _roleManager.Roles.Where(c => c.Id == RoleWithIdEnum.Editor).FirstOrDefault().Name;
-
-            return await AddRole(user, role);
-        }
-
-        public async Task<bool> AddRolePhotography(ApplicationUser user)
-        {
-            string role = _roleManager.Roles.Where(c => c.Id == RoleWithIdEnum.Photography).FirstOrDefault().Name;
-
-            return await AddRole(user, role);
         }
 
         public async Task<bool> Update(ApplicationUser user)
@@ -133,9 +120,45 @@ namespace YouYou.Business.Services
             return true;
         }
 
+        public async Task<bool> UpdateRoles(ApplicationUser user, ICollection<Guid> newRolesId)
+        {
+            bool sucesso = true;
+
+            var oldRoles = user.UserRoles.Select(c => c.RoleId);
+
+            var newRoles = newRolesId.Except(oldRoles).ToList();
+            if (newRoles.Any())
+                sucesso = await AddRoles(user, newRoles);
+
+            var removeRoles = oldRoles.Except(newRolesId).ToList();
+            if (removeRoles.Any())
+            {
+                var roles = _roleManager.Roles.Where(c => removeRoles.Contains(c.Id)).Select(c => c.Name).ToList();
+                sucesso = await RemoveRoles(user, roles);
+            }
+
+            return sucesso;
+        }
+
         public async Task<bool> RemoveRole(ApplicationUser user, string role)
         {
             var result = await _userManager.RemoveFromRoleAsync(user, role);
+
+            if (result.Succeeded)
+            {
+                return true;
+            }
+
+            foreach (var erro in result.Errors)
+            {
+                NotifyError(erro.Description);
+            }
+
+            return false;
+        }
+        public async Task<bool> RemoveRoles(ApplicationUser user, ICollection<string> roles)
+        {
+            var result = await _userManager.RemoveFromRolesAsync(user, roles);
 
             if (result.Succeeded)
             {
@@ -166,12 +189,34 @@ namespace YouYou.Business.Services
 
             return false;
         }
+        public async Task<bool> AddRoles(ApplicationUser user, ICollection<string> roles)
+        {
+            var result = await _userManager.AddToRolesAsync(user, roles);
+
+            if (result.Succeeded)
+            {
+                return true;
+            }
+
+            foreach (var erro in result.Errors)
+            {
+                NotifyError(erro.Description);
+            }
+
+            return false;
+        }
 
         public async Task<bool> AddRole(ApplicationUser user, Guid roleId)
         {
             var roleName = _roleManager.Roles.Where(c => c.Id == roleId).FirstOrDefault().Name;
 
             return await AddRole(user, roleName);
+        }
+        public async Task<bool> AddRoles(ApplicationUser user, ICollection<Guid> roleId)
+        {
+            var roleNames = _roleManager.Roles.Where(c => roleId.Contains(c.Id)).Select(c => c.Name).ToList();
+
+            return await AddRoles(user, roleNames);
         }
 
         public ICollection<ApplicationRole> GetRoles()
@@ -223,19 +268,5 @@ namespace YouYou.Business.Services
 
             await Update(user);
         }
-
-        public async Task<bool> AddRoleCoordinator(ApplicationUser user)
-        {
-            string role = _roleManager.Roles.Where(c => c.Id == RoleWithIdEnum.Coordinator).FirstOrDefault().Name;
-
-            return await AddRole(user, role);
-        }
-
-        //public async Task ConfirmTermsOfUse(TermsOfUseDto termsOfUseDto)
-        //{
-        //    var user = await _userManager.FindByIdAsync(_appUser.GetUserId().ToString());
-        //    user.TermsOfUse = termsOfUseDto.CreateJson();
-        //    await Update(user);
-        //}
     }
 }

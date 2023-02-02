@@ -56,10 +56,11 @@ namespace YouYou.Data.Repository
                             .ThenInclude(g => g.TypeGender)
                 .Include(dd => dd.User)
                     .ThenInclude(d => d.ExtraPhones)
+                .Include(dd => dd.User)
+                    .ThenInclude(d => d.UserRoles)
                 .Include(d => d.Address)
                     .ThenInclude(a => a.City)
                 .Include(dd => dd.BankData)
-                .Include(dd => dd.DocumentPhotos)
                 .FirstOrDefaultAsync(c => c.Id == id);
         }
         public async Task<Employee> GetByIdWithIncludesTracked(Guid id)
@@ -71,9 +72,10 @@ namespace YouYou.Data.Repository
                             .ThenInclude(g => g.TypeGender)
                 .Include(dd => dd.User)
                     .ThenInclude(d => d.ExtraPhones)
+                .Include(dd => dd.User)
+                    .ThenInclude(d => d.UserRoles)
                 .Include(d => d.Address)
                 .Include(dd => dd.BankData)
-                .Include(dd => dd.DocumentPhotos)
                 .FirstOrDefaultAsync(c => c.Id == id);
         }
     }

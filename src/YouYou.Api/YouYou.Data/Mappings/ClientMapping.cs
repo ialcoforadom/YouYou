@@ -11,10 +11,12 @@ namespace YouYou.Data.Mappings
             builder.HasKey(c => c.Id);
 
             builder.HasOne(f => f.Address)
-                .WithOne();
+                .WithOne()
+                .OnDelete(DeleteBehavior.Cascade);
 
             builder.HasOne(f => f.User)
-                .WithOne();
+                .WithOne()
+                .OnDelete(DeleteBehavior.Cascade);
 
             builder.ToTable("Clients");
         }

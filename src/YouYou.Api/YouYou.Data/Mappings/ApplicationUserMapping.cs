@@ -28,6 +28,18 @@ namespace YouYou.Data.Mappings
                 .IsRequired()
                 .HasColumnType("bit");
 
+            builder.Property(d => d.CreatedAt)
+                .IsRequired(false)
+                .HasColumnType("datetime");
+
+            builder.Property(c => c.FileName)
+                .IsRequired(false)
+                .HasColumnType("varchar(256)");
+
+            builder.Property(c => c.DataFiles)
+                .IsRequired(false)
+                .HasColumnType("LONGBLOB");
+
             builder.HasMany(f => f.ExtraPhones)
                 .WithOne(p => p.User)
                 .HasForeignKey(p => p.UserId);
